@@ -19,18 +19,33 @@ export default {
   computed: {
     getJavascriptCode() {
       let text = `
+      
           function createElement(){
           let htmlContent = '
           
           <div class="main-container">
-    <div class="slider slider-active">
+    <div class="slider" onclick="handleslider()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="slider-svg"
+        class="slider-svg open "
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 19.5L8.25 12l7.5-7.5"
+        />
+      </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="slider-svg close active"
       >
         <path
           stroke-linecap="round"
@@ -448,12 +463,23 @@ export default {
   box-shadow: 0 0 10px gray;
 }
 
+.slider-inactive{
+  position:relative;
+  top:0;
+  right:-39rem;
+  transition: all 0.9s ease-in-out;
+}
+
+.active{
+  display:block !important;
+}
 
 .slider-svg {
   height: 100%;
   width: 100%;
   stroke: white;
   stroke-width: 3;
+  display:none;
 }
 .file_container {
   width: 81%;
@@ -709,10 +735,24 @@ export default {
           iframeBody.innerHTML  =htmlContent;
 
           iframeBody.appendChild(document.createElement("script")).innerText='
-          
+
+            const closeSvg = document.querySelector(".close");
+            const openSvg = document.querySelector(".open");
+            
+
             function cancleFile(){
                 window.alert("click On Delete Button")
-            }
+            };
+
+            function handleslider(){
+              let slider = document.querySelector(".file_container");
+              slider.classList.toggle("wrap");
+               let sliderBtn = document.querySelector(".slider");
+
+              sliderBtn.classList.toggle("slider-inactive");
+              openSvg.classList.toggle("active");
+              closeSvg.classList.toggle("active");
+            };
           '
 
           }
