@@ -413,7 +413,7 @@ export default {
 
         <div class="flex btn-container">
           <button class="btn-cancle save-btn">Save Change</button>
-          <button class="btn-cancle">Cancle</button>
+          <button class="btn-cancle" onclick="cancleFile(this)">Cancle</button>
         </div>
       </div>
     </div>
@@ -733,15 +733,17 @@ export default {
         
           
           iframeBody.innerHTML  =htmlContent;
-
+          
           iframeBody.appendChild(document.createElement("script")).innerText='
 
             const closeSvg = document.querySelector(".close");
             const openSvg = document.querySelector(".open");
             
 
-            function cancleFile(){
-                window.alert("click On Delete Button")
+            
+            function cancleFile(e){
+              const iframeEle = parent.document.querySelector("#design-iframe");
+              iframeEle.remove();
             };
 
             function handleslider(){
@@ -759,7 +761,6 @@ export default {
         
           if (document.readyState === "complete") {
             createElement();
-            
           } else {
             alert("Please wait until the page loads.");
           }
