@@ -81,7 +81,7 @@ export default {
           <img
             src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29mYXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
             alt="product_img"
-            class="product_img"
+            class="product_img current-img"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -90,6 +90,7 @@ export default {
             stroke-width="1.5"
             stroke="currentColor"
             class="right-icon icon"
+            onclick="handleSliderRight();"
           >
             <path
               stroke-linecap="round"
@@ -105,6 +106,7 @@ export default {
             stroke-width="1.5"
             stroke="currentColor"
             class="left-icon icon"
+            onclick="handleSliderLeft();"
           >
             <path
               stroke-linecap="round"
@@ -738,8 +740,45 @@ export default {
 
             const closeSvg = document.querySelector(".close");
             const openSvg = document.querySelector(".open");
-            
 
+            
+            
+            let images = [
+              "https://images.unsplash.com/photo-1540574163026-643ea20ade25?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1611967164521-abae8fba4668?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1565374395542-0ce18882c857?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHNvZmFzfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
+
+            ];
+            let imgIndex = 0;
+            const currentImg = document.querySelector(".current-img");
+
+            currentImg.src = images[imgIndex];
+           
+            function handleSliderRight(){
+              if(imgIndex < images.length-1){
+                imgIndex++;
+                currentImg.src = images[imgIndex];
+              }
+              else{
+                imgIndex = 0;
+              }
+            };
+
+            function handleSliderLeft(){
+              if(imgIndex > 0){
+                imgIndex--;
+                currentImg.src = images[imgIndex];
+              }
+              else{
+                imgIndex = images.length-1;
+              }
+            };
             
             function cancleFile(e){
               const iframeEle = parent.document.querySelector("#design-iframe");
@@ -755,6 +794,8 @@ export default {
               openSvg.classList.toggle("active");
               closeSvg.classList.toggle("active");
             };
+
+            
           '
 
           }
