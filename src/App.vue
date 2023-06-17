@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view />
+    
   </div>
 </template>
 
@@ -14,7 +15,5 @@
 html {
   font-size: 10px;
 }
-body{
- 
-}
+
 </style>
