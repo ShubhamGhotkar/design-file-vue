@@ -3,22 +3,154 @@
     <a class="anchor-button" :href="`javascript:${getJavascriptCode}`"
       >Add to Design File
     </a>
-    <!-- <DesignFile /> -->
-    <BrowserCliperVue />
   </div>
 </template>
 
 <script>
-// import DesignFile from "@/components/DesignFile.vue";
-import BrowserCliperVue from "@/components/BrowserCliper.vue";
-
 export default {
-  components: {
-    // DesignFile,
-    BrowserCliperVue,
-  },
+  computed: {
+    getJavascriptCode() {
+      return `
+      let body = document.body;
+      let head = document.head;
 
-  computed: {},
+      let container = document.createElement('div');
+      container.id = 'container';
+
+      let iframe = document.createElement('iframe');
+      iframe.id = 'iframe';
+
+      iframe.src = 'https://9cdb-2409-4081-1c86-95c4-dfd-6357-298f-1c3b.ngrok-free.app/';
+      
+      container.appendChild(iframe);
+      
+
+      body.appendChild(container);
+
+      let slider = document.createElement('div');
+      slider.classList = 'slider';
+
+      let iframeEle = document.querySelector('.slider');
+      let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      let innerElement = iframeDocument.getElementById('deleteBtn');
+
+      console.log(iframeDocument);
+      console.log(innerElement);
+
+      slider.innerHTML = '
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="slider-svg close active"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8.25 4.5l7.5 7.5-7.5 7.5"
+        />
+      </svg>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="slider-svg open "
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 19.5L8.25 12l7.5-7.5"
+        />
+      </svg>
+      
+      ';
+
+      slider.addEventListener('click',()=>{
+        let open = document.querySelector('.open');
+        let close = document.querySelector('.close');
+        iframe.classList.toggle('wrap');
+        slider.classList.toggle('slideBtn');
+        open.classList.toggle('active');
+        close.classList.toggle('active');
+      });
+
+      setTimeout(()=>{
+        container.appendChild(slider);
+      },1000);
+
+
+      let styleFile = document.createElement('style');
+
+      styleFile.textContent = '
+      html{
+        font-size:10px;
+      }
+
+      #container{
+        height:100vh;
+        width:25vw;
+
+        position:fixed;
+        top:0;
+        right:0;
+
+        z-index:999999999;
+        box-shadow: 0 0 10px gray;
+      }
+
+      iframe{
+        height:100%;
+        width:100%;
+        border:none;
+      }
+
+      .slider{
+        height: 3.5rem;
+        width: 3.5rem;
+        background-color: #f74545;
+        position: absolute;
+        top: 2rem;
+        left: -3.5rem;
+        
+        border-radius: 1rem 0 0 1rem;
+        cursor:pointer;
+
+        display:grid;
+        place-items:center;
+        z-index:999999999;
+        box-shadow: 0 0 10px gray;
+      }
+
+      .slideBtn{
+        left: 35rem !important;
+      }
+
+      .slider-svg{
+        height:2rem;
+        width:2rem;
+        stroke:white;
+        stroke-width:4;
+
+        display:none;
+      }
+
+      .wrap{
+        width:0%;
+      }
+
+      .active{
+        display:block;
+      }
+      ';
+      head.appendChild(styleFile);
+      `;
+    },
+  },
 };
 </script>
 
