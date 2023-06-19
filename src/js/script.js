@@ -1,18 +1,37 @@
-<template>
-  <div class="main-container">
-    <div class="slider slider-active">
+export function getJavascriptCode() {
+  let text = `
+      
+          function createElement(){
+          let htmlContent = '
+          
+          <div class="main-container">
+    <div class="slider" onclick="handleslider()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="slider-svg"
+        class="slider-svg open "
       >
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
           d="M15.75 19.5L8.25 12l7.5-7.5"
+        />
+      </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="slider-svg close active"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8.25 4.5l7.5 7.5-7.5 7.5"
         />
       </svg>
     </div>
@@ -43,7 +62,7 @@
           <img
             src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29mYXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
             alt="product_img"
-            class="product_img"
+            class="product_img current-img"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -52,6 +71,7 @@
             stroke-width="1.5"
             stroke="currentColor"
             class="right-icon icon"
+            onclick="handleSliderRight();"
           >
             <path
               stroke-linecap="round"
@@ -67,6 +87,7 @@
             stroke-width="1.5"
             stroke="currentColor"
             class="left-icon icon"
+            onclick="handleSliderLeft();"
           >
             <path
               stroke-linecap="round"
@@ -99,18 +120,10 @@
         >
         <select class="product_input dropdown">
           <option disabled selected value="">My Library</option>
-          <option value="input Field">
-            <input
-              type="text"
-              class="dropdown-input"
-              placeholder="write here...!"
-            />
-          </option>
         </select>
 
         <label class="product_info mg">Vendor Product Name:</label>
         <textarea class="product_info text-area" cols="30" rows="4"></textarea>
-
         <div class="label-container">
           <label class="product_info mg">Client-Facing Product Name:</label>
           <label class="product_info mg">
@@ -131,13 +144,10 @@
           </label>
         </div>
         <input type="text" class="product_input" />
-
         <label class="product_info mg">Vendor:</label>
         <input type="text" class="product_input" />
-
         <label class="product_info mg">Link:</label>
         <input type="text" class="product_input" />
-
         <label class="product_info mg">Category:</label>
         <select class="product_input dropdown">
           <option disabled selected value="">
@@ -150,10 +160,8 @@
           <option value="Lightning">Lightning</option>
           <option value="Outdoor">Outdoor</option>
         </select>
-
         <label class="product_info mg">Tags:</label>
         <input type="text" class="product_input" />
-
         <div class="price-container">
           <div class="price-container-itm-1">
             <div class="price-label-div">
@@ -197,7 +205,6 @@
         <div class="select-div-container">
           <label class="product_info mg">MSRP:</label>
           <input type="text" class="product_input" />
-
           <div class="select-div select-position">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -280,7 +287,6 @@
             </svg>
           </div>
         </div>
-
         <div class="select-div-container">
           <label class="product_info mg">Material/Finish:</label>
           <input type="text" class="product_input" />
@@ -323,7 +329,6 @@
           >
         </div>
         <input type="text" class="product_input" />
-
         <div class="label-container">
           <label class="product_info mg">Est. Shipping Cost:</label>
           <label class="product_info mg font-blur">
@@ -345,7 +350,6 @@
           >
         </div>
         <input type="text" class="product_input" />
-
         <div class="select-div-container">
           <div class="label-container">
             <label class="product_info mg">General Notes:</label>
@@ -392,36 +396,66 @@
 
         <div class="flex btn-container">
           <button class="btn-cancle save-btn">Save Change</button>
-          <button class="btn-cancle">Cancle</button>
+          <button class="btn-cancle" onclick="cancleFile(this)">Cancle</button>
         </div>
       </div>
     </div>
   </div>
-</template>
+          
+          ';
+              
+              
+              
+              
+              
+          let body = document.body;
+          let head = document.head;
+              
+          let ele = document.createElement("iframe");
+          ele.id = 'design-iframe';
+          body.appendChild(ele);
+          let iframe = document.getElementById('design-iframe');
+          let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+          let iframeBody = iframeDocument.body;
+              
 
-<!-- ele.style.boxShadow = '2px 2px 20px gray'; -->
-<script>
-export default {};
-</script>
+          let styleFile = iframeDocument.createElement('style');
+          styleFile.textContent = '
+          html{
+            font-size:10px;
+          }
 
-<style lang="scss" scoped>
-.wrap {
-  width: 0% !important;
+          body{
+            background="orange"
+          }
+         .main-container{
+          width:100%;
+          display:flex;
+          margin-top:-1rem;
+         }
+          .wrap {
+  display:none !important;
 }
 .slider {
-  height: 3.5rem;
-  width: 3.5rem;
+  height: 3rem;
+  width: 3rem;
   background-color: #f74545;
   border-radius: 0.7rem 0 0 0.7rem;
   cursor: pointer;
-  position: absolute;
-  top: 2rem;
+  margin-top:2.5rem;
+  z-index:999999;
+  box-shadow: 0 0 10px gray;
 }
-.slider-active {
-  left: 38rem;
+
+.slider-inactive{
+  position:relative;
+  top:0;
+  right:-39rem;
+  transition: all 0.9s ease-in-out;
 }
-.slider-inactive {
-  left: 0;
+
+.active{
+  display:block !important;
 }
 
 .slider-svg {
@@ -429,21 +463,20 @@ export default {};
   width: 100%;
   stroke: white;
   stroke-width: 3;
+  display:none;
 }
 .file_container {
-  width: 25%;
-  margin: 0 auto;
+  width: 81%;
   height: 100vh;
 
-  position: fixed;
-  top: 0;
-  left: 0;
+
   box-shadow: 2px 2px 20px gray;
+  background-color: #e8f4f5;
 }
 .product {
-  width: 96%;
-
-  height: 100vh;
+  width: 100%;
+  
+  height: 47vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 4rem 0 2.5rem;
@@ -555,11 +588,11 @@ export default {};
 }
 .left-icon {
   left: 0;
-  transform: translate(-90%, -65%);
+  transform: translate(-100%, -65%);
 }
 .right-icon {
   right: 0;
-  transform: translate(100%, -50%);
+  transform: translate(50%, -50%);
 }
 
 .select-div {
@@ -668,4 +701,96 @@ export default {};
   font-size: 1.7rem;
   color: #00b2c2;
 }
-</style>
+          
+          ';
+          
+          iframeDocument.head.appendChild(styleFile);
+
+            ele.style.width = '28vw';
+            ele.style.height = '100vw';
+            ele.style.position = 'fixed';
+            ele.style.top = '0';
+            ele.style.right = '0';
+            ele.style.border = 'none';
+            ele.style.zIndex = '99';
+            
+        
+          
+          iframeBody.innerHTML  =htmlContent;
+          
+          iframeBody.appendChild(document.createElement("script")).innerText='
+
+            const closeSvg = document.querySelector(".close");
+            const openSvg = document.querySelector(".open");
+
+            
+            
+            let images = [
+              "https://images.unsplash.com/photo-1540574163026-643ea20ade25?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1611967164521-abae8fba4668?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c29mYXN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+
+              "https://images.unsplash.com/photo-1565374395542-0ce18882c857?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHNvZmFzfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
+
+            ];
+            let imgIndex = 0;
+            const currentImg = document.querySelector(".current-img");
+
+            currentImg.src = images[imgIndex];
+           
+            function handleSliderRight(){
+              if(imgIndex < images.length-1){
+                imgIndex++;
+                currentImg.src = images[imgIndex];
+              }
+              else{
+                imgIndex = 0;
+              }
+            };
+
+            function handleSliderLeft(){
+              if(imgIndex > 0){
+                imgIndex--;
+                currentImg.src = images[imgIndex];
+              }
+              else{
+                imgIndex = images.length-1;
+              }
+            };
+            
+            function cancleFile(e){
+              const iframeEle = parent.document.querySelector("#design-iframe");
+              iframeEle.remove();
+            };
+
+
+            function handleslider(){
+              let slider = document.querySelector(".file_container");
+              slider.classList.toggle("wrap");
+               let sliderBtn = document.querySelector(".slider");
+
+              sliderBtn.classList.toggle("slider-inactive");
+              openSvg.classList.toggle("active");
+              closeSvg.classList.toggle("active");
+            };
+
+            
+          '
+
+          }
+        
+          if (document.readyState === "complete") {
+            createElement();
+            console.log(document.querySelectorAll("img"));
+            
+          } else {
+            alert("Please wait until the page loads.");
+          }
+          `;
+
+  return text;
+}
