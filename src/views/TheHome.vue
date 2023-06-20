@@ -11,143 +11,173 @@ export default {
   computed: {
     getJavascriptCode() {
       return `
-      let body = document.body;
-      let head = document.head;
+        if (document.readyState === "complete") {
 
-      let container = document.createElement('div');
-      container.id = 'container';
+            let body = document.body;
+            let head = document.head;
 
-      let iframe = document.createElement('iframe');
-      iframe.id = 'iframe';
+            document.body.addEventListener('click', function(event) {
+              const clickedElement = event.target;
+              const selectedText = clickedElement.innerText;
 
-      iframe.src = 'https://9cdb-2409-4081-1c86-95c4-dfd-6357-298f-1c3b.ngrok-free.app/';
-      
-      container.appendChild(iframe);
-      
+              if (selectedText !== '' && selectedText !== undefined) {
+                console.log(selectedText);
+              }
+              
+            });
 
-      body.appendChild(container);
+            
 
-      let slider = document.createElement('div');
-      slider.classList = 'slider';
+            let container = document.createElement('div');
+            container.id = 'container';
 
-      let iframeEle = document.querySelector('.slider');
-      let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-      let innerElement = iframeDocument.getElementById('deleteBtn');
+            let iframe = document.createElement('iframe');
+            iframe.id = 'iframe';
 
-      console.log(iframeDocument);
-      console.log(innerElement);
+            iframe.src = 'https://efe0-2409-4081-e10-dc65-4884-8fa6-35ba-109d.ngrok-free.app/';
+            
+            
+            container.appendChild(iframe);
+            
+            body.appendChild(container);
 
-      slider.innerHTML = '
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="slider-svg close active"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M8.25 4.5l7.5 7.5-7.5 7.5"
-        />
-      </svg>
-
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="slider-svg open "
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15.75 19.5L8.25 12l7.5-7.5"
-        />
-      </svg>
-      
-      ';
-
-      slider.addEventListener('click',()=>{
-        let open = document.querySelector('.open');
-        let close = document.querySelector('.close');
-        iframe.classList.toggle('wrap');
-        slider.classList.toggle('slideBtn');
-        open.classList.toggle('active');
-        close.classList.toggle('active');
-      });
-
-      setTimeout(()=>{
-        container.appendChild(slider);
-      },1000);
+            let slider = document.createElement('div');
+            slider.classList = 'slider';
 
 
-      let styleFile = document.createElement('style');
+            slider.innerHTML = '
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="slider-svg close active"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
 
-      styleFile.textContent = '
-      html{
-        font-size:10px;
-      }
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="slider-svg open "
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
+            
+            ';
 
-      #container{
-        height:100vh;
-        width:25vw;
+            slider.addEventListener('click',()=>{
+              let open = document.querySelector('.open');
+              let close = document.querySelector('.close');
+              iframe.classList.toggle('wrap');
+              slider.classList.toggle('slideBtn');
+              open.classList.toggle('active');
+              close.classList.toggle('active');
+            });
 
-        position:fixed;
-        top:0;
-        right:0;
+            setTimeout(()=>{
+              container.appendChild(slider);
+            },1000);
 
-        z-index:999999999;
-        box-shadow: 0 0 10px gray;
-      }
 
-      iframe{
-        height:100%;
-        width:100%;
-        border:none;
-      }
+            let styleFile = document.createElement('style');
 
-      .slider{
-        height: 3.5rem;
-        width: 3.5rem;
-        background-color: #f74545;
-        position: absolute;
-        top: 2rem;
-        left: -3.5rem;
-        
-        border-radius: 1rem 0 0 1rem;
-        cursor:pointer;
+            styleFile.textContent = '
+            html{
+              font-size:10px;
+            }
 
-        display:grid;
-        place-items:center;
-        z-index:999999999;
-        box-shadow: 0 0 10px gray;
-      }
+            #container{
+              height:100vh;
+              width:25vw;
 
-      .slideBtn{
-        left: 35rem !important;
-      }
+              position:fixed;
+              top:0;
+              right:0;
+              z-index:999999999;
+            }
 
-      .slider-svg{
-        height:2rem;
-        width:2rem;
-        stroke:white;
-        stroke-width:4;
+            iframe{
+              height:100%;
+              width:100%;
+              border:none;
+              box-shadow: 0 0 10px gray;
+              z-index:999999999;
+            }
 
-        display:none;
-      }
+            .slider{
+              height: 3.5rem;
+              width: 3.5rem;
+              background-color: #f74545;
+              position: absolute;
+              top: 2rem;
+              left: -3.5rem;
+              
+              border-radius: 1rem 0 0 1rem;
+              cursor:pointer;
 
-      .wrap{
-        width:0%;
-      }
+              display:grid;
+              place-items:center;
+              z-index:999999999;
+              box-shadow: 0 0 10px gray;
+            }
 
-      .active{
-        display:block;
-      }
-      ';
-      head.appendChild(styleFile);
+            .slideBtn{
+              left: 35rem !important;
+            }
+
+            .slider-svg{
+              height:2rem;
+              width:2rem;
+              stroke:white;
+              stroke-width:4;
+
+              display:none;
+            }
+
+            .wrap{
+              width:0%;
+            }
+
+            .active{
+              display:block;
+            }
+            ';
+            head.appendChild(styleFile);
+
+            
+            let iFrmScript = document.createElement("script");
+            
+            iFrmScript.textContent = '
+                window.addEventListener("load", () => {
+
+                window.addEventListener("message", (event) => { 
+                window.alert(event.data); 
+                });
+                
+              });
+              ';
+
+              iframe.contentDocument.body.appendChild(iFrmScript);
+              iframe.contentWindow.postMessage("message", "http://localhost:8080");
+
+                          
+            
+          } else {
+              alert("Please wait until the page loads.");
+            }
       `;
     },
   },

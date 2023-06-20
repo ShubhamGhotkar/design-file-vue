@@ -414,6 +414,7 @@ export function getJavascriptCode() {
           let ele = document.createElement("iframe");
           ele.id = 'design-iframe';
           body.appendChild(ele);
+
           let iframe = document.getElementById('design-iframe');
           let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
           let iframeBody = iframeDocument.body;
