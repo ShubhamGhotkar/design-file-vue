@@ -11,39 +11,55 @@ export default {
   computed: {
     getJavascriptCode() {
       return `
+        function setToLocalStorage(key,value){
+          JSON.stringify(localStorage.setItem(key, value));
+        };
+        function getFromLocalStorage(key){
+          return localStorage.getItem(key) || [];
+        };
         if (document.readyState === "complete") {
+            let array = [];
 
             let body = document.body;
             let head = document.head;
-
-            document.body.addEventListener('click', function(event) {
-              const clickedElement = event.target;
-              const selectedText = clickedElement.innerText;
-
-              if (selectedText !== '' && selectedText !== undefined) {
-                console.log(selectedText);
-              }
-              
-            });
-
-            
 
             let container = document.createElement('div');
             container.id = 'container';
 
             let iframe = document.createElement('iframe');
             iframe.id = 'iframe';
-
-            iframe.src = 'https://efe0-2409-4081-e10-dc65-4884-8fa6-35ba-109d.ngrok-free.app/';
             
+
+            iframe.src = 'https://ea8d-2409-4081-e10-dc65-7cb6-3703-bd61-de0a.ngrok-free.app?data1=shubham&data2=ghotkar';
             
             container.appendChild(iframe);
             
             body.appendChild(container);
 
+            window.addEventListener("message", function(event) {
+              const {action,key} = event.data;
+              if(action === 'select text'){
+                document.body.style.cursor = "crosshair";
+                document.body.addEventListener('click', function(event) {
+                  const clickedElement = event.target;
+                  const selectedText = clickedElement.innerText;
+                  
+                  if (selectedText !== '' && selectedText !== undefined) {
+                    
+                    document.body.style.cursor = "pointer";
+                    let arr = getFromLocalStorage('cliperData');
+                    arr.push({key:selectedText});
+                    setToLocalStorage('cliperData',arr);
+                  console.log(getFromLocalStorage('cliperData'));
+                }
+              });
+              }
+              
+            });
+
+
             let slider = document.createElement('div');
             slider.classList = 'slider';
-
 
             slider.innerHTML = '
             <svg
@@ -157,23 +173,6 @@ export default {
             ';
             head.appendChild(styleFile);
 
-            
-            let iFrmScript = document.createElement("script");
-            
-            iFrmScript.textContent = '
-                window.addEventListener("load", () => {
-
-                window.addEventListener("message", (event) => { 
-                window.alert(event.data); 
-                });
-                
-              });
-              ';
-
-              iframe.contentDocument.body.appendChild(iFrmScript);
-              iframe.contentWindow.postMessage("message", "http://localhost:8080");
-
-                          
             
           } else {
               alert("Please wait until the page loads.");
