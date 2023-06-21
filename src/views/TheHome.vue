@@ -12,13 +12,32 @@ export default {
     getJavascriptCode() {
       return `
         function setToLocalStorage(key,value){
-          JSON.stringify(localStorage.setItem(key, value));
+          localStorage.setItem(key, value);
         };
         function getFromLocalStorage(key){
-          return localStorage.getItem(key) || [];
+          return localStorage.getItem(key) || {};
         };
+
+        let set = new Set();
+        let setValue = {
+                  VendorProductName:"",
+                  ClientFacingProductName:"",
+                  Vendor:"",
+                  Link:"",
+                  Category:"",
+                  Tags:"",
+                  MSRP:"",
+                  SKU:"",
+                  Description:"",
+                  Dimensions:"",
+                  MaterialFinish:"",
+                  EstLeadTime:"",
+                  EstShippingCost:"",
+                  GeneralNotes:"",
+        };
+
         if (document.readyState === "complete") {
-            let array = [];
+           
 
             let body = document.body;
             let head = document.head;
@@ -28,34 +47,71 @@ export default {
 
             let iframe = document.createElement('iframe');
             iframe.id = 'iframe';
+
             
 
-            iframe.src = 'https://ea8d-2409-4081-e10-dc65-7cb6-3703-bd61-de0a.ngrok-free.app?data1=shubham&data2=ghotkar';
+            iframe.src = 'https://80f3-2409-4081-e10-dc65-5fb-9824-cc26-dd7e.ngrok-free.app?data1=arr';
             
+
             container.appendChild(iframe);
-            
+
             body.appendChild(container);
 
             window.addEventListener("message", function(event) {
               const {action,key} = event.data;
-              if(action === 'select text'){
+
+              
+              let arr = getFromLocalStorage('selectArray');
+
+              function handleImgClick(e) {
+                let clickEle = e.target;
+                  if(clickEle.tagName === "IMG"){
+                    const imgSrc = clickEle.src;
+                    set.add(imgSrc);
+                    setToLocalStorage('ImageArray',JSON.stringify(set));
+                    console.log(set);
+                  }else{
+                    window.alert("please select proper Image");
+                  }
+                  document.body.style.cursor = 'default';
+                  return document.body.removeEventListener('click', handleImgClick);
+              }
+
+              if(action === 'select image'){ 
+                
                 document.body.style.cursor = "crosshair";
-                document.body.addEventListener('click', function(event) {
+
+                document.body.addEventListener('click',handleImgClick);
+                
+                
+              };
+
+              if(action === 'select text'){
+                
+                document.body.style.cursor = "crosshair";
+
+                function handleTextClick(event) {
                   const clickedElement = event.target;
                   const selectedText = clickedElement.innerText;
-                  
+
                   if (selectedText !== '' && selectedText !== undefined) {
-                    
                     document.body.style.cursor = "pointer";
-                    let arr = getFromLocalStorage('cliperData');
-                    arr.push({key:selectedText});
-                    setToLocalStorage('cliperData',arr);
-                  console.log(getFromLocalStorage('cliperData'));
-                }
-              });
-              }
-              
+
+                    setValue[key] = selectedText;
+                   
+                    setToLocalStorage('selectArray',JSON.stringify(setValue));
+                    document.body.style.cursor = "default";
+                  }
+
+                  console.log(setValue);
+                  document.body.removeEventListener('click', handleImgClick);
+                };
+
+                document.body.addEventListener('click',handleTextClick);
+              };
+
             });
+
 
 
             let slider = document.createElement('div');
@@ -91,7 +147,7 @@ export default {
                 d="M15.75 19.5L8.25 12l7.5-7.5"
               />
             </svg>
-            
+
             ';
 
             slider.addEventListener('click',()=>{
@@ -140,7 +196,7 @@ export default {
               position: absolute;
               top: 2rem;
               left: -3.5rem;
-              
+
               border-radius: 1rem 0 0 1rem;
               cursor:pointer;
 
@@ -173,7 +229,7 @@ export default {
             ';
             head.appendChild(styleFile);
 
-            
+
           } else {
               alert("Please wait until the page loads.");
             }
