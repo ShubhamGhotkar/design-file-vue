@@ -50,13 +50,16 @@ export default {
 
             
 
-            iframe.src = 'https://80f3-2409-4081-e10-dc65-5fb-9824-cc26-dd7e.ngrok-free.app?data1=arr';
+            iframe.src = 'https://371b-2409-4081-e10-dc65-788a-866f-dc0d-a765.ngrok-free.app?data1=arr';
             
 
             container.appendChild(iframe);
 
             body.appendChild(container);
 
+            let frame = document.getElementById('iframe');
+            const iframeWindow = frame.contentWindow;
+            
             window.addEventListener("message", function(event) {
               const {action,key} = event.data;
 
@@ -70,6 +73,7 @@ export default {
                     set.add(imgSrc);
                     setToLocalStorage('ImageArray',JSON.stringify(set));
                     console.log(set);
+                   
                   }else{
                     window.alert("please select proper Image");
                   }
@@ -90,24 +94,25 @@ export default {
                 
                 document.body.style.cursor = "crosshair";
 
+                
                 function handleTextClick(event) {
                   const clickedElement = event.target;
                   const selectedText = clickedElement.innerText;
 
                   if (selectedText !== '' && selectedText !== undefined) {
                     document.body.style.cursor = "pointer";
-
                     setValue[key] = selectedText;
-                   
                     setToLocalStorage('selectArray',JSON.stringify(setValue));
                     document.body.style.cursor = "default";
                   }
-
-                  console.log(setValue);
+                  
                   document.body.removeEventListener('click', handleImgClick);
                 };
-
+               
+                let self = event;
+                
                 document.body.addEventListener('click',handleTextClick);
+                event.source.postMessage({key:"textData",value:setValue}, '*');
               };
 
             });
