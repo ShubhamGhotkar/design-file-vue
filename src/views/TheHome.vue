@@ -6,6 +6,7 @@
   </div>
 </template>
 
+<!-- e.source.postMessage({ key: "textData", value: setValue }, '*'); -->
 <script>
 export default {
   computed: {
@@ -19,7 +20,7 @@ export default {
         };
 
         let set = new Set();
-        let setValue = {
+        localStorage.setItem('textArray', JSON.stringify({
                   VendorProductName:"",
                   ClientFacingProductName:"",
                   Vendor:"",
@@ -34,8 +35,8 @@ export default {
                   EstLeadTime:"",
                   EstShippingCost:"",
                   GeneralNotes:"",
-        };
-
+        }));
+        let setValue =JSON.parse(localStorage.getItem('textArray'));
         if (document.readyState === "complete") {
            
 
@@ -50,7 +51,7 @@ export default {
 
             
 
-            iframe.src = 'https://371b-2409-4081-e10-dc65-788a-866f-dc0d-a765.ngrok-free.app?data1=arr';
+            iframe.src = 'https://23c1-2409-4081-e10-dc65-519c-b11-af19-ae97.ngrok-free.app?data1=arr';
             
 
             container.appendChild(iframe);
@@ -60,62 +61,60 @@ export default {
             let frame = document.getElementById('iframe');
             const iframeWindow = frame.contentWindow;
             
-            window.addEventListener("message", function(event) {
-              const {action,key} = event.data;
+            
+            window.addEventListener("message",async function (event) {
+              const { action, key } = event.data;
 
-              
               let arr = getFromLocalStorage('selectArray');
 
               function handleImgClick(e) {
                 let clickEle = e.target;
-                  if(clickEle.tagName === "IMG"){
-                    const imgSrc = clickEle.src;
-                    set.add(imgSrc);
-                    setToLocalStorage('ImageArray',JSON.stringify(set));
-                    console.log(set);
-                   
-                  }else{
-                    window.alert("please select proper Image");
-                  }
-                  document.body.style.cursor = 'default';
-                  return document.body.removeEventListener('click', handleImgClick);
+                if (clickEle.tagName === "IMG") {
+                  const imgSrc = clickEle.src;
+                  set.add(imgSrc);
+                  setToLocalStorage('ImageArray', JSON.stringify(set));
+                  console.log(set);
+                } else {
+                  window.alert("please select proper Image");
+                }
+                document.body.style.cursor = 'default';
+                document.body.removeEventListener('click', handleImgClick);
               }
 
-              if(action === 'select image'){ 
-                
+              if (action === 'select image') {
                 document.body.style.cursor = "crosshair";
+                document.body.addEventListener('click', handleImgClick);
+                return;
+              }
 
-                document.body.addEventListener('click',handleImgClick);
-                
-                
-              };
-
-              if(action === 'select text'){
-                
-                document.body.style.cursor = "crosshair";
+              function handleTextClick(e) {
+                const clickedElement = e.target;
+                const selectedText = clickedElement.innerText;
 
                 
-                function handleTextClick(event) {
-                  const clickedElement = event.target;
-                  const selectedText = clickedElement.innerText;
-
-                  if (selectedText !== '' && selectedText !== undefined) {
-                    document.body.style.cursor = "pointer";
-                    setValue[key] = selectedText;
-                    setToLocalStorage('selectArray',JSON.stringify(setValue));
-                    document.body.style.cursor = "default";
-                  }
+                if (selectedText !== '' && selectedText !== undefined) {
+                  document.body.style.cursor = "pointer";
+                  setValue[key] = selectedText;
+                  console.log(key);
+                  let  localData = JSON.parse(localStorage.getItem('textArray'));
                   
-                  document.body.removeEventListener('click', handleImgClick);
-                };
-               
-                let self = event;
-                
-                document.body.addEventListener('click',handleTextClick);
-                event.source.postMessage({key:"textData",value:setValue}, '*');
-              };
+                  localData[key] = selectedText;
+                  
+                  localStorage.setItem('textArray', JSON.stringify(localData));
+                  
+                  document.body.style.cursor = "default";
+                  event.source.postMessage({ key: "textData", value: JSON.parse(localStorage.getItem('textArray')) }, '*');
+                  
+                }
+                document.body.removeEventListener('click', handleTextClick);
+              }
 
+              if (action === 'select text') {
+                document.body.style.cursor = "crosshair";
+                document.body.addEventListener('click', handleTextClick);
+              }
             });
+
 
 
 
