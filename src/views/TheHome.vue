@@ -19,7 +19,12 @@ export default {
           return localStorage.getItem(key) || {};
         };
 
-        let set = new Set();
+        if (document.readyState === "complete") {
+        
+        localStorage.setItem('imgArray', JSON.stringify([]));
+        let imgData = JSON.parse(localStorage.getItem('imgArray'));
+        let set = new Set(imgData);
+
         localStorage.setItem('textArray', JSON.stringify({
                   VendorProductName:"",
                   ClientFacingProductName:"",
@@ -37,7 +42,6 @@ export default {
                   GeneralNotes:"",
         }));
         let setValue =JSON.parse(localStorage.getItem('textArray'));
-        if (document.readyState === "complete") {
            
 
             let body = document.body;
@@ -57,29 +61,33 @@ export default {
             container.appendChild(iframe);
 
             body.appendChild(container);
-
-            let frame = document.getElementById('iframe');
-            const iframeWindow = frame.contentWindow;
             
-            
-            window.addEventListener("message",async function (event) {
+            window.addEventListener("message", function (event) {
               const { action, key } = event.data;
 
-              let arr = getFromLocalStorage('selectArray');
+              if (action === "save change") {
+                window.alert("save Change");
+              }
+
+              if (action === "delete frame") {
+                let frameCon = document.querySelector("#container");
+                frameCon.remove(); 
+              }
 
               function handleImgClick(e) {
                 let clickEle = e.target;
                 if (clickEle.tagName === "IMG") {
                   const imgSrc = clickEle.src;
                   set.add(imgSrc);
-                  setToLocalStorage('ImageArray', JSON.stringify(set));
-                  console.log(set);
+                  setToLocalStorage('imgArray', JSON.stringify(set));
+                  event.source.postMessage({ key: "imgData", value: set}, '*');
                 } else {
                   window.alert("please select proper Image");
                 }
                 document.body.style.cursor = 'default';
                 document.body.removeEventListener('click', handleImgClick);
               }
+
 
               if (action === 'select image') {
                 document.body.style.cursor = "crosshair";
@@ -234,6 +242,9 @@ export default {
             head.appendChild(styleFile);
 
 
+            let frame = document.getElementById('iframe');
+            
+            frame.contentWindow.postMessage("Hello from parent window!", "*");
           } else {
               alert("Please wait until the page loads.");
             }
