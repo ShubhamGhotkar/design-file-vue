@@ -1,4 +1,6 @@
-<template>
+<!-- 
+  
+  <template>
   <div class="home-container">
     <a class="anchor-button" :href="`javascript:${getJavascriptCode}`"
       >Add to Design File
@@ -6,7 +8,7 @@
   </div>
 </template>
 
-<!--
+
    e.source.postMessage({ key: "textData", value: setValue }, '*'); 
   const heading = document.querySelector('[data-hb-id="Heading"]');
 
@@ -25,8 +27,8 @@
             console.log("SKU", SKU.innerText);
             corouser.forEach(img=>console.log(img.src));
           }
-  .replace("https://",'').split("/")[0]
--->
+  
+
 <script>
 import { userData } from "../data/userData";
 
@@ -34,7 +36,7 @@ export default {
   computed: {
     getJavascriptCode() {
       let keyObj = {
-        id: window.location.href.replace("https://", "").split("/")[0],
+        id: window.location.href,
         VendorProductName: "[data-hb-id=Heading]",
         ClientFacingProductName: "",
         Vendor: "",
@@ -52,55 +54,72 @@ export default {
         GeneralNotes: "",
         Corouser: "[data-enzyme-id=InitialImage]",
       };
-      console.log(keyObj);
-      let initialData = {
-        id: window.location.href.replace("https://", "").split("/")[0],
-        VendorProductName: "[data-hb-id=Heading]",
-        Link: window.location.href,
-        SKU: "[data-enzyme-id=breadcrumbList]",
-        Price: "[data-enzyme-id=PriceBlock]",
-        Description: "[data-enzyme-id=Collapse-Collapsible]",
-        Corouser: "[data-enzyme-id=InitialImage]",
-      };
       return `
 
+      
+
       if (document.readyState === "complete") {
-        let body = document.body;
-        let head = document.head;
-        let container = document.createElement('div');
-        container.id = 'container';
-        let iframe = document.createElement('iframe');
-        iframe.id = 'iframe';
-        iframe.src = 'https://c6b4-2409-4081-e10-dc65-95b-4a11-4f2b-62e7.ngrok-free.app?data1=arr';
-        container.appendChild(iframe);
-        document.body.appendChild(container);
-        iframe.addEventListener('load', function() {
-          iframe.contentWindow.postMessage({key:"hello frame",value:"123"}, "*");
-          let currentUrl = window.location.href;
-  
-          switch(window.location.href){
-            case "http://localhost:8081/":
-               ${userData.localHost.push(initialData)};
-               ${console.log(userData)};
-               break;
-            
-            case "https://www.wayfair.com/furniture/pdp/wade-logan-abby-gayle-85-wide-reversible-sleeper-sofa-chaise-w000440564.html":
-               ${userData.wayFair.push(initialData)};
-               ${console.log(userData)};
-               break;
-          }
+
+        document.addEventListener('load', ()=>{
+          ${userData.push(keyObj)};
+          
+
         });
 
-        
+
+          
+
+              localStorage.setItem('imgArray', JSON.stringify([]));
+              let imgData = JSON.parse(localStorage.getItem('imgArray'));
+              let set = new Set(imgData);
+
+              localStorage.setItem('textArray', JSON.stringify({
+                        VendorProductName: "",
+                        ClientFacingProductName:"",
+                        Vendor:"",
+                        Link:"",
+                        Category:"",
+                        Tags:"",
+                        MSRP:"",
+                        SKU:"",
+                        Description:"",
+                        Dimensions:"",
+                        MaterialFinish:"",
+                        EstLeadTime:"",
+                        EstShippingCost:"",
+                        GeneralNotes:"",
+              }));
+              let setValue =JSON.parse(localStorage.getItem('textArray'));
 
 
-       
+                  let body = document.body;
+                  let head = document.head;
+
+                  let container = document.createElement('div');
+                  container.id = 'container';
+
+                  let iframe = document.createElement('iframe');
+                  iframe.id = 'iframe';
+
+                  iframe.src = 'https://c6b4-2409-4081-e10-dc65-95b-4a11-4f2b-62e7.ngrok-free.app?data1=arr';
+
+                  container.appendChild(iframe);
+
+                  document.body.appendChild(container);
+
+                  iframe.addEventListener('load', function() {
+                    iframe.contentWindow.postMessage({key:"hello frame",value:"123"}, "*");
+                  });
+                  
+                  
+                  
+                  
                   window.addEventListener("message", function (event) {
                     const { action, key } = event.data;
-
-
+                    
+                    
                     if (action === "save change") {
-
+                      
                     }
 
                     if (action === "delete frame") {
@@ -313,4 +332,4 @@ export default {
   }
 }
 </style>
-../data/userData
+../data/userData  -->
