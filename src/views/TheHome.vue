@@ -11,6 +11,22 @@ export default {
   computed: {
     getJavascriptCode() {
       return `
+      function setPath(element) {
+        const pathArray = [];
+      let currentElement = element;
+
+        while (currentElement !== document.body || null) {
+          let elementSelector = currentElement.tagName.toLowerCase();
+
+          if(currentElement.id && !currentElement.id.includes(':') && !currentElement.id.includes('#')){
+            elementSelector = '#' + currentElement.id;
+          }
+          pathArray.unshift(elementSelector);
+          currentElement = currentElement.parentNode;
+        }
+      return pathArray.join(' > ');
+    };
+
 
       if (document.readyState === "complete") {
         let body = document.body;
@@ -34,80 +50,71 @@ export default {
         });
         
         
-        window.addEventListener("message",  (event) =>{
+        window.addEventListener("message", (event) => {
           const { action, key } = event.data;
-
-          if (action === "getUserData") {
-              let browserData = {};
-
-              for (let [x, value] of Object.entries(key)) {
-                if (value !== "" && x !== "id" && x !== "Link" && x !== "Corouser") {
-                  browserData[x] = document.querySelector(value).innerText;
-                }else if(x === "Corouser"){
-                  let imgArray = Array.from(document.querySelectorAll(value));
-                  imgArray = imgArray.map(val=>val.src);
-                  browserData[x] = imgArray;
-                }
-                else{
-                  browserData[x] = key[x];
-                }
                 
+          if (action === "getUserData") {
+            let browserData = {};
+          
+            for (let [x, value] of Object.entries(key)) {
+              if (value !== "" && x !== "id" && x !== "Link" && x !== "Corouser") {
+                browserData[x] = document.querySelector(value).innerText;
+              } else if (x === "Corouser") {
+                let imgArray = Array.from(document.querySelectorAll(value));
+                imgArray = imgArray.map((val) => val.src);
+                browserData[x] = imgArray;
+              } else {
+                browserData[x] = key[x];
               }
-              event.source.postMessage({ key: "browserData", value: browserData  }, '*');
             }
-
+          
+            event.source.postMessage({ key: "browserData", value: browserData }, "*");
+          }
+        
           if (action === "delete frame") {
             let frameCon = document.querySelector("#container");
             frameCon.remove();
-    
+          }
+        
           function handleImgClick(e) {
             let clickEle = e.target;
             if (clickEle.tagName === "IMG") {
               const imgSrc = clickEle.src;
               set.add(imgSrc);
-              setToLocalStorage('imgArray', JSON.stringify(set));
-              event.source.postMessage({ key: "imgData", value: set}, '*');
+              setToLocalStorage("imgArray", JSON.stringify(set));
+              event.source.postMessage({ key: "imgData", value: set }, "*");
             } else {
-              window.alert("please select proper Image");
+              window.alert("Please select a proper image");
             }
-            document.body.style.cursor = 'default';
+            document.body.style.cursor = "default";
           }
-
-
-          if (action === 'select image') {
+        
+          if (action === "select image") {
             document.body.style.cursor = "crosshair";
-            document.body.addEventListener('click', handleImgClick, { once: true });
+            document.body.addEventListener("click", handleImgClick, { once: true });
             return;
           }
-
+        
           function handleTextClick(e) {
             const clickedElement = e.target;
             const selectedText = clickedElement.innerText;
-
-            console.log(e.target.id,"  and  ",e.target.className);
-
-            if (selectedText !== '' && selectedText !== undefined) {
+            
+            if (selectedText !== "" && selectedText !== undefined) {
               document.body.style.cursor = "pointer";
-              setValue[key] = selectedText;
-              console.log(key);
-              let  localData = JSON.parse(localStorage.getItem('textArray'));
-
-              localData[key] = selectedText;
-
-              localStorage.setItem('textArray', JSON.stringify(localData));
-
+              console.log(key,setPath(e.target));
               document.body.style.cursor = "default";
-              event.source.postMessage({ key: "textData", value: JSON.parse(localStorage.getItem('textArray')) }, '*');
+              event.source.postMessage({ key: "updatedKey", value: {objKey:key,path:setPath(e.target)} }, "*");
 
-                }
-              }
+            }
+          }
+        
+          if (action === "select text") {
+            document.body.style.cursor = "crosshair";
+            document.body.addEventListener("click", handleTextClick, { once: true });
+          }
+        });
 
-              if (action === 'select text') {
-                document.body.style.cursor = "crosshair";
-                document.body.addEventListener('click', handleTextClick,{ once: true });
-              }
-            });
-
+            
 
 
 
