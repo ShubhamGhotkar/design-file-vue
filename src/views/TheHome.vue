@@ -6,62 +6,10 @@
   </div>
 </template>
 
-<!--
-   e.source.postMessage({ key: "textData", value: setValue }, '*'); 
-  const heading = document.querySelector('[data-hb-id="Heading"]');
-
-          const description = document.querySelector('[data-enzyme-id="Collapse-Collapsible"]');
-
-          const price = document.querySelector('[data-enzyme-id="PriceBlock"]');
-
-          const SKU = document.querySelector('[data-enzyme-id="breadcrumbList"]');
-
-          const corouser = document.querySelectorAll('[data-enzyme-id="InitialImage"]');
-
-          if(heading && description &&  price && SKU && corouser){
-            console.log("Heading", heading.innerText);
-            console.log("Description", description.innerText);
-            console.log("Price", price.innerText);
-            console.log("SKU", SKU.innerText);
-            corouser.forEach(img=>console.log(img.src));
-          }
-  .replace("https://",'').split("/")[0]
--->
 <script>
-import { userData } from "../data/userData";
-
 export default {
   computed: {
     getJavascriptCode() {
-      let keyObj = {
-        id: window.location.href.replace("https://", "").split("/")[0],
-        VendorProductName: "[data-hb-id=Heading]",
-        ClientFacingProductName: "",
-        Vendor: "",
-        Link: window.location.href,
-        Category: "",
-        Tags: "",
-        MSRP: "",
-        SKU: "[data-enzyme-id=breadcrumbList]",
-        Price: "[data-enzyme-id=PriceBlock]",
-        Description: "[data-enzyme-id=Collapse-Collapsible]",
-        Dimensions: "",
-        MaterialFinish: "",
-        EstLeadTime: "",
-        EstShippingCost: "",
-        GeneralNotes: "",
-        Corouser: "[data-enzyme-id=InitialImage]",
-      };
-      console.log(keyObj);
-      let initialData = {
-        id: window.location.href.replace("https://", "").split("/")[0],
-        VendorProductName: "[data-hb-id=Heading]",
-        Link: window.location.href,
-        SKU: "[data-enzyme-id=breadcrumbList]",
-        Price: "[data-enzyme-id=PriceBlock]",
-        Description: "[data-enzyme-id=Collapse-Collapsible]",
-        Corouser: "[data-enzyme-id=InitialImage]",
-      };
       return `
 
       if (document.readyState === "complete") {
@@ -71,213 +19,206 @@ export default {
         container.id = 'container';
         let iframe = document.createElement('iframe');
         iframe.id = 'iframe';
-        iframe.src = 'https://c6b4-2409-4081-e10-dc65-95b-4a11-4f2b-62e7.ngrok-free.app?data1=arr';
+        iframe.src = 'https://54b9-2409-4081-1e0e-cd0b-1957-8593-8aea-f81b.ngrok-free.app?data1=arr';
         container.appendChild(iframe);
         document.body.appendChild(container);
-        iframe.addEventListener('load', function() {
-          iframe.contentWindow.postMessage({key:"hello frame",value:"123"}, "*");
-          let currentUrl = window.location.href;
-  
-          switch(window.location.href){
-            case "http://localhost:8081/":
-               ${userData.localHost.push(initialData)};
-               ${console.log(userData)};
-               break;
-            
-            case "https://www.wayfair.com/furniture/pdp/wade-logan-abby-gayle-85-wide-reversible-sleeper-sofa-chaise-w000440564.html":
-               ${userData.wayFair.push(initialData)};
-               ${console.log(userData)};
-               break;
+
+        iframe.addEventListener('load', ()=> {
+          let currentUser = window.location.hostname;
+          let currentURL = window.location.href;
+          if(currentUser === 'localhost'){
+            iframe.contentWindow.postMessage({key:currentUser,value:currentURL}, "*");
+          }else if(currentUser === 'www.wayfair.com'){
+            iframe.contentWindow.postMessage({key:currentUser,value:currentURL}, "*");
           }
         });
-
         
+        
+        window.addEventListener("message",  (event) =>{
+          const { action, key } = event.data;
+
+          if (action === "getUserData") {
+              let browserData = {};
+
+              for (let [x, value] of Object.entries(key)) {
+                if (value !== "" && x !== "id" && x !== "Link" && x !== "Corouser") {
+                  browserData[x] = document.querySelector(value).innerText;
+                }else if(x === "Corouser"){
+                  let imgArray = Array.from(document.querySelectorAll(value));
+                  imgArray = imgArray.map(val=>val.src);
+                  browserData[x] = imgArray;
+                }
+                else{
+                  browserData[x] = key[x];
+                }
+                
+              }
+              event.source.postMessage({ key: "browserData", value: browserData  }, '*');
+            }
+
+          if (action === "delete frame") {
+            let frameCon = document.querySelector("#container");
+            frameCon.remove();
+    
+          function handleImgClick(e) {
+            let clickEle = e.target;
+            if (clickEle.tagName === "IMG") {
+              const imgSrc = clickEle.src;
+              set.add(imgSrc);
+              setToLocalStorage('imgArray', JSON.stringify(set));
+              event.source.postMessage({ key: "imgData", value: set}, '*');
+            } else {
+              window.alert("please select proper Image");
+            }
+            document.body.style.cursor = 'default';
+          }
 
 
-       
-                  window.addEventListener("message", function (event) {
-                    const { action, key } = event.data;
+          if (action === 'select image') {
+            document.body.style.cursor = "crosshair";
+            document.body.addEventListener('click', handleImgClick, { once: true });
+            return;
+          }
 
+          function handleTextClick(e) {
+            const clickedElement = e.target;
+            const selectedText = clickedElement.innerText;
 
-                    if (action === "save change") {
+            console.log(e.target.id,"  and  ",e.target.className);
 
-                    }
+            if (selectedText !== '' && selectedText !== undefined) {
+              document.body.style.cursor = "pointer";
+              setValue[key] = selectedText;
+              console.log(key);
+              let  localData = JSON.parse(localStorage.getItem('textArray'));
 
-                    if (action === "delete frame") {
-                      let frameCon = document.querySelector("#container");
-                      frameCon.remove();
-                    }
+              localData[key] = selectedText;
 
-                    function handleImgClick(e) {
-                      let clickEle = e.target;
-                      if (clickEle.tagName === "IMG") {
-                        const imgSrc = clickEle.src;
-                        set.add(imgSrc);
-                        setToLocalStorage('imgArray', JSON.stringify(set));
-                        event.source.postMessage({ key: "imgData", value: set}, '*');
-                      } else {
-                        window.alert("please select proper Image");
-                      }
-                      document.body.style.cursor = 'default';
-                      document.body.removeEventListener('click', handleImgClick);
-                    }
+              localStorage.setItem('textArray', JSON.stringify(localData));
 
+              document.body.style.cursor = "default";
+              event.source.postMessage({ key: "textData", value: JSON.parse(localStorage.getItem('textArray')) }, '*');
 
-                    if (action === 'select image') {
-                      document.body.style.cursor = "crosshair";
-                      document.body.addEventListener('click', handleImgClick);
-                      return;
-                    }
+                }
+              }
 
-                    function handleTextClick(e) {
-                      const clickedElement = e.target;
-                      const selectedText = clickedElement.innerText;
-
-                      console.log(e.target.id,"  and  ",e.target.className);
-
-                      if (selectedText !== '' && selectedText !== undefined) {
-                        document.body.style.cursor = "pointer";
-                        setValue[key] = selectedText;
-                        console.log(key);
-                        let  localData = JSON.parse(localStorage.getItem('textArray'));
-
-                        localData[key] = selectedText;
-
-                        localStorage.setItem('textArray', JSON.stringify(localData));
-
-                        document.body.style.cursor = "default";
-                        event.source.postMessage({ key: "textData", value: JSON.parse(localStorage.getItem('textArray')) }, '*');
-
-                      }
-                      document.body.removeEventListener('click', handleTextClick);
-                    }
-
-                    if (action === 'select text') {
-                      document.body.style.cursor = "crosshair";
-                      document.body.addEventListener('click', handleTextClick);
-                    }
-                  });
-
-
-
-
-                  let slider = document.createElement('div');
-                  slider.classList = 'slider';
-
-                  slider.innerHTML = '
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="slider-svg close active"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                    />
-                  </svg>
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="slider-svg open "
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M15.75 19.5L8.25 12l7.5-7.5"
-                    />
-                  </svg>
-
-                  ';
-
-                  slider.addEventListener('click',()=>{
-                    let open = document.querySelector('.open');
-                    let close = document.querySelector('.close');
-                    iframe.classList.toggle('wrap');
-                    slider.classList.toggle('slideBtn');
-                    open.classList.toggle('active');
-                    close.classList.toggle('active');
-                  });
-
-                  setTimeout(()=>{
-                    container.appendChild(slider);
-                  },1000);
-
-
-                  let styleFile = document.createElement('style');
-
-                  styleFile.textContent = '
-                  html{
-                    font-size:10px;
-                  }
-
-                  #container{
-                    height:100vh;
-                    width:25vw;
-
-                    position:fixed;
-                    top:0;
-                    right:0;
-                    z-index:999999999;
-                  }
-
-                  iframe{
-                    height:100%;
-                    width:100%;
-                    border:none;
-                    box-shadow: 0 0 10px gray;
-                    z-index:999999999;
-                  }
-
-                  .slider{
-                    height: 3.5rem;
-                    width: 3.5rem;
-                    background-color: #f74545;
-                    position: absolute;
-                    top: 2rem;
-                    left: -3.5rem;
-
-                    border-radius: 1rem 0 0 1rem;
-                    cursor:pointer;
-
-                    display:grid;
-                    place-items:center;
-                    z-index:999999999;
-                    box-shadow: 0 0 10px gray;
-                  }
-
-                  .slideBtn{
-                    left: 35rem !important;
-                  }
-
-                  .slider-svg{
-                    height:2rem;
-                    width:2rem;
-                    stroke:white;
-                    stroke-width:4;
-
-                    display:none;
-                  }
-
-                  .wrap{
-                    width:0%;
-                  }
-
-                  .active{
-                    display:block;
-                  }
-                  ';
-                  head.appendChild(styleFile);
+              if (action === 'select text') {
+                document.body.style.cursor = "crosshair";
+                document.body.addEventListener('click', handleTextClick,{ once: true });
+              }
+            });
 
 
 
+
+      let slider = document.createElement('div');
+        slider.classList = 'slider';
+
+          slider.innerHTML = '
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="slider-svg close active"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="slider-svg open "
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
+          </svg>
+          ';
+
+          slider.addEventListener('click',()=>{
+            let open = document.querySelector('.open');
+            let close = document.querySelector('.close');
+            iframe.classList.toggle('wrap');
+            slider.classList.toggle('slideBtn');
+            open.classList.toggle('active');
+            close.classList.toggle('active');
+          });
+
+          setTimeout(()=>{
+            container.appendChild(slider);
+          },1000);
+
+          let styleFile = document.createElement('style');
+
+          styleFile.textContent = '
+            html{
+              font-size:10px;
+            }
+
+            #container{
+              height:100vh;
+              width:25vw;
+              position:fixed;
+              top:0;
+              right:0;
+              z-index:999999999;
+            }
+
+            iframe{
+              height:100%;
+              width:100%;
+              border:none;
+              box-shadow: 0 0 10px gray;
+              z-index:999999999;
+            }
+
+            .slider{
+              height: 3.5rem;
+              width: 3.5rem;
+              background-color: #f74545;
+              position: absolute;
+              top: 2rem;
+              left: -3.5rem;
+              border-radius: 1rem 0 0 1rem;
+              cursor:pointer;
+              display:grid;
+              place-items:center;
+              z-index:999999999;
+              box-shadow: 0 0 10px gray;
+            }
+
+            .slideBtn{
+              left: 35rem !important;
+            }
+
+            .slider-svg{
+              height:2rem;
+              width:2rem;
+              stroke:white;
+              stroke-width:4;
+              display:none;
+            }
+
+            .wrap{
+              width:0%;
+            }
+
+            .active{
+              display:block;
+            }
+            ';
+            head.appendChild(styleFile);
               } else {
                   alert("Please wait until the page loads.");
                 }
