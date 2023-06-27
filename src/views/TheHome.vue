@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import data from "../data/data";
 export default {
   computed: {
     getJavascriptCode() {
@@ -27,7 +28,7 @@ export default {
       return pathArray.join(' > ');
     };
 
-
+    
       if (document.readyState === "complete") {
         let body = document.body;
         let head = document.head;
@@ -35,7 +36,7 @@ export default {
         container.id = 'container';
         let iframe = document.createElement('iframe');
         iframe.id = 'iframe';
-        iframe.src = 'https://54b9-2409-4081-1e0e-cd0b-1957-8593-8aea-f81b.ngrok-free.app?data1=arr';
+        iframe.src = 'https://13a4-2409-4081-1e0e-cd0b-c0a5-4221-e1d-845f.ngrok-free.app';
         container.appendChild(iframe);
         document.body.appendChild(container);
 
@@ -104,7 +105,6 @@ export default {
               console.log(key,setPath(e.target));
               document.body.style.cursor = "default";
               event.source.postMessage({ key: "updatedKey", value: {objKey:key,path:setPath(e.target)} }, "*");
-
             }
           }
         
