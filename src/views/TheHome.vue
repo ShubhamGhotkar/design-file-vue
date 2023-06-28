@@ -129,24 +129,22 @@ export default {
             frameCon.remove();
           }
 
-          function handleImgClick(e) {
+          const handleImgClick = (e)=>{
             let clickEle = e.target;
             let imgSrc = "";
             if (clickEle.tagName  === "IMG") {
               imgSrc = clickEle.src;
-              let currentPage = getData();
               let pageId = window.location.href;
-              let pageData = getData();
-              let imageData = pageData.find(page=>page.id === pageId);
+              let currentPage = getData();
+              let imageData = currentPage.find(page=>page.id === pageId);
               imageData.SelectImg.push(imgSrc);
-              setData(imageData);
-              console.log("imageData",imageData);
+              setData(currentPage);
               event.source.postMessage({ key: "imgData", value: imageData }, "*");
             } else {
               window.alert("Please select a proper image");
             }
             document.body.style.cursor = "default";
-          }
+          };
 
           if (action === "select image") {
             document.body.style.cursor = "crosshair";
@@ -162,16 +160,10 @@ export default {
               document.body.style.cursor = "default";
               let pageId = window.location.href;
               let pageData = getData();
-              let updatePage = pageData.find((page)=>{
-                if(page.id ===pageId){
-                  page[key] = setPath(e.target);
-                }
-                return page;
-              });
-
+              let updatePage = pageData.find(page=>page.id ===pageId);
+              updatePage[key] = setPath(e.target);
               event.source.postMessage({key:'updateData',value:updatePage}, "*");
               setData(pageData);
-
             }
           }
 
