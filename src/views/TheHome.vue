@@ -30,7 +30,6 @@ export default {
         return JSON.parse(localStorage.getItem("browserCliperData"));
       }
 
-
       function setPath(element) {
         const pathArray = [];
         let currentElement = element;
@@ -39,11 +38,11 @@ export default {
           let elementSelector = currentElement.tagName.toLowerCase();
 
           if (currentElement.id && !currentElement.id.includes(':') && !currentElement.id.includes('#')) {
-            elementSelector = '#' + currentElement.id;
+            elementSelector += '#' + currentElement.id;
           } else if (currentElement.classList.length > 0) {
-            elementSelector = '.' + currentElement.classList[0];
+            const classNames = Array.from(currentElement.classList).filter(className => !className.includes(':') && !className.includes('.'));
+            elementSelector += '.' + classNames.join('.');
           }
-
           pathArray.unshift(elementSelector);
           currentElement = currentElement.parentNode;
         }
@@ -111,7 +110,11 @@ export default {
               for (let [keys, value] of Object.entries(key)) {
                 if (value && value !== "" && keys !== "id" && keys !== "Link" && keys !== "Corouser"&& keys !== "SelectImg") {
                   let ele = document.querySelector(value);
-                  browserData[keys] = ele ? ele.innerText : "";
+                  if(value === 'meta[name="description"]'){
+                    browserData[keys] = ele ? ele.content : "";
+                  }else{
+                    browserData[keys] = ele ? ele.innerText : "";
+                  }
                 } else if (keys === "Corouser") {
                   let imgArray = Array.from(document.querySelectorAll(value)) || [];
                   imgArray = imgArray.map((val) => val.src) ;
@@ -123,6 +126,7 @@ export default {
             } 
             event.source.postMessage({ key: "browserData", value: browserData }, "*");
           }
+
 
           if (action === "delete frame") {
             let frameCon = document.querySelector("#container");
@@ -162,6 +166,7 @@ export default {
               let pageData = getData();
               let updatePage = pageData.find(page=>page.id ===pageId);
               updatePage[key] = setPath(e.target);
+              console.log(setPath(e.target));
               event.source.postMessage({key:'updateData',value:updatePage}, "*");
               setData(pageData);
             }

@@ -9,7 +9,7 @@ export let data = {
   MSRP: "",
   SKU: "[data-enzyme-id=breadcrumbList]",
   Price: "[data-enzyme-id=PriceBlock]",
-  Description: "[data-enzyme-id=Collapse-Collapsible]",
+  Description: `meta[name="description"]`,
   Dimensions: "",
   MaterialFinish: "",
   EstLeadTime: "",
