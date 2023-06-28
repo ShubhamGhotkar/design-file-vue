@@ -7,116 +7,179 @@
 </template>
 
 <script>
-import data from "../data/data";
+import { data } from "../data/data";
+
+// const siblings = Array.from(currentElement.parentNode.children).filter(
+//   (sibling) => sibling.tagName === currentElement.tagName
+// );
+
+// if (siblings.length > 1) {
+//   const index = siblings.indexOf(currentElement) + 1;
+//   elementSelector += ":nth-child(" + index + ")";
+// }
+
 export default {
   computed: {
     getJavascriptCode() {
       return `
+      function setData(data){
+        localStorage.setItem("browserCliperData", JSON.stringify(data));
+      }
+
+      function getData(){
+        return JSON.parse(localStorage.getItem("browserCliperData"));
+      }
+
+
       function setPath(element) {
         const pathArray = [];
-      let currentElement = element;
+        let currentElement = element;
 
-        while (currentElement !== document.body || null) {
+        while (currentElement !== document.body && currentElement !== null) {
           let elementSelector = currentElement.tagName.toLowerCase();
 
-          if(currentElement.id && !currentElement.id.includes(':') && !currentElement.id.includes('#')){
+          if (currentElement.id && !currentElement.id.includes(':') && !currentElement.id.includes('#')) {
             elementSelector = '#' + currentElement.id;
+          } else if (currentElement.classList.length > 0) {
+            elementSelector = '.' + currentElement.classList[0];
           }
+
           pathArray.unshift(elementSelector);
           currentElement = currentElement.parentNode;
         }
-      return pathArray.join(' > ');
-    };
 
-    
+        return pathArray.join('  ');
+      }
+
+
+
       if (document.readyState === "complete") {
+
+        if(!getData()){
+          setData([]);
+        }
+
+        console.log(getData());
+
         let body = document.body;
         let head = document.head;
         let container = document.createElement('div');
         container.id = 'container';
         let iframe = document.createElement('iframe');
         iframe.id = 'iframe';
-        iframe.src = 'https://13a4-2409-4081-1e0e-cd0b-c0a5-4221-e1d-845f.ngrok-free.app';
+        iframe.src = 'https://c654-2409-4081-1e0e-cd0b-d421-9d3a-7c4b-eabd.ngrok-free.app';
         container.appendChild(iframe);
         document.body.appendChild(container);
 
         iframe.addEventListener('load', ()=> {
           let currentUser = window.location.hostname;
           let currentURL = window.location.href;
-          if(currentUser === 'localhost'){
-            iframe.contentWindow.postMessage({key:currentUser,value:currentURL}, "*");
-          }else if(currentUser === 'www.wayfair.com'){
-            iframe.contentWindow.postMessage({key:currentUser,value:currentURL}, "*");
+
+
+          let dataFromLocal = getData();
+          if (!Array.isArray(dataFromLocal)) {
+            dataFromLocal = [];
           }
+
+          let isVisited = dataFromLocal.find(val => val.id == currentURL) || [];
+
+          if(isVisited.length==0){
+            let newPage = ${JSON.stringify(data)};
+            newPage.id = window.location.href;
+            newPage.Link = window.location.href;
+            isVisited.push((newPage));
+            setData(isVisited);
+            iframe.contentWindow.postMessage({key:'setData',value:newPage}, "*");
+          }else{
+            iframe.contentWindow.postMessage({key:'setData',value:isVisited}, "*");
+          }
+
         });
-        
-        
+
+
         window.addEventListener("message", (event) => {
           const { action, key } = event.data;
-                
+
+          if(action === "getData"){
+            let {setData} = event.data;
+          }
+
           if (action === "getUserData") {
+            console.log('event.data',event.data);
             let browserData = {};
-          
-            for (let [x, value] of Object.entries(key)) {
-              if (value !== "" && x !== "id" && x !== "Link" && x !== "Corouser") {
-                browserData[x] = document.querySelector(value).innerText;
-              } else if (x === "Corouser") {
-                let imgArray = Array.from(document.querySelectorAll(value));
-                imgArray = imgArray.map((val) => val.src);
-                browserData[x] = imgArray;
-              } else {
-                browserData[x] = key[x];
+            if(key){
+              for (let [keys, value] of Object.entries(key)) {
+                if (value && value !== "" && keys !== "id" && keys !== "Link" && keys !== "Corouser"&& keys !== "SelectImg") {
+                  let ele = document.querySelector(value);
+                  browserData[keys] = ele ? ele.innerText : "";
+                } else if (keys === "Corouser") {
+                  let imgArray = Array.from(document.querySelectorAll(value)) || [];
+                  imgArray = imgArray.map((val) => val.src) ;
+                  browserData[keys] = imgArray;
+                } else {
+                  browserData[keys] = key[keys];
+                }
               }
-            }
-          
+            } 
             event.source.postMessage({ key: "browserData", value: browserData }, "*");
           }
-        
+
           if (action === "delete frame") {
             let frameCon = document.querySelector("#container");
             frameCon.remove();
           }
-        
+
           function handleImgClick(e) {
             let clickEle = e.target;
-            if (clickEle.tagName === "IMG") {
-              const imgSrc = clickEle.src;
-              set.add(imgSrc);
-              setToLocalStorage("imgArray", JSON.stringify(set));
-              event.source.postMessage({ key: "imgData", value: set }, "*");
+            let imgSrc = "";
+            if (clickEle.tagName  === "IMG") {
+              imgSrc = clickEle.src;
+              let currentPage = getData();
+              let pageId = window.location.href;
+              let pageData = getData();
+              let imageData = pageData.find(page=>page.id === pageId);
+              imageData.SelectImg.push(imgSrc);
+              setData(imageData);
+              console.log("imageData",imageData);
+              event.source.postMessage({ key: "imgData", value: imageData }, "*");
             } else {
               window.alert("Please select a proper image");
             }
             document.body.style.cursor = "default";
           }
-        
+
           if (action === "select image") {
             document.body.style.cursor = "crosshair";
             document.body.addEventListener("click", handleImgClick, { once: true });
-            return;
           }
-        
+
           function handleTextClick(e) {
             const clickedElement = e.target;
             const selectedText = clickedElement.innerText;
-            
+
             if (selectedText !== "" && selectedText !== undefined) {
               document.body.style.cursor = "pointer";
-              console.log(key,setPath(e.target));
               document.body.style.cursor = "default";
-              event.source.postMessage({ key: "updatedKey", value: {objKey:key,path:setPath(e.target)} }, "*");
+              let pageId = window.location.href;
+              let pageData = getData();
+              let updatePage = pageData.find((page)=>{
+                if(page.id ===pageId){
+                  page[key] = setPath(e.target);
+                }
+                return page;
+              });
+
+              event.source.postMessage({key:'updateData',value:updatePage}, "*");
+              setData(pageData);
+
             }
           }
-        
+
           if (action === "select text") {
             document.body.style.cursor = "crosshair";
             document.body.addEventListener("click", handleTextClick, { once: true });
           }
         });
-
-            
-
-
 
       let slider = document.createElement('div');
         slider.classList = 'slider';
