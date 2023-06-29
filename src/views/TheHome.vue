@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { data } from "../data/data";
+// import { data } from "../data/data";
 
 // const siblings = Array.from(currentElement.parentNode.children).filter(
 //   (sibling) => sibling.tagName === currentElement.tagName
@@ -18,47 +18,35 @@ import { data } from "../data/data";
 //   elementSelector += ":nth-child(" + index + ")";
 // }
 
+//
+
 export default {
+  data() {
+    return {
+      userData: [],
+    };
+  },
+  mounted() {},
+  methods: {
+    runScript() {
+      const script = document.createElement("script");
+      script.src = "../../public/shubham"; // Replace with the actual path to your JavaScript file
+      document.body.appendChild(script);
+    },
+  },
   computed: {
+    xyz() {
+      return `
+      `;
+    },
     getJavascriptCode() {
       return `
-      function setData(data){
-        localStorage.setItem("browserCliperData", JSON.stringify(data));
-      }
-
-      function getData(){
-        return JSON.parse(localStorage.getItem("browserCliperData"));
-      }
-
-      function setPath(element) {
-        const pathArray = [];
-        let currentElement = element;
-
-        while (currentElement !== document.body && currentElement !== null) {
-          let elementSelector = currentElement.tagName.toLowerCase();
-
-          if (currentElement.id && !currentElement.id.includes(':') && !currentElement.id.includes('#')) {
-            elementSelector += '#' + currentElement.id;
-          } else if (currentElement.classList.length > 0) {
-            const classNames = Array.from(currentElement.classList).filter(className => !className.includes(':') && !className.includes('.'));
-            elementSelector += '.' + classNames.join('.');
-          }
-          pathArray.unshift(elementSelector);
-          currentElement = currentElement.parentNode;
-        }
-
-        return pathArray.join('  ');
-      }
-
-
-
       if (document.readyState === "complete") {
 
-        if(!getData()){
-          setData([]);
-        }
-
-        console.log(getData());
+        const script = document.createElement("script");
+        script.src = "https://4a82-2409-4081-1e0e-cd0b-b454-8f9f-8af8-fad2.ngrok-free.app/shubham.js";
+        
+        document.body.appendChild(script);
 
         let body = document.body;
         let head = document.head;
@@ -66,121 +54,13 @@ export default {
         container.id = 'container';
         let iframe = document.createElement('iframe');
         iframe.id = 'iframe';
-        iframe.src = 'https://c654-2409-4081-1e0e-cd0b-d421-9d3a-7c4b-eabd.ngrok-free.app';
+        iframe.src = 'https://4a82-2409-4081-1e0e-cd0b-b454-8f9f-8af8-fad2.ngrok-free.app';
         container.appendChild(iframe);
         document.body.appendChild(container);
 
-        iframe.addEventListener('load', ()=> {
-          let currentUser = window.location.hostname;
-          let currentURL = window.location.href;
-
-
-          let dataFromLocal = getData();
-          if (!Array.isArray(dataFromLocal)) {
-            dataFromLocal = [];
-          }
-
-          let isVisited = dataFromLocal.find(val => val.id == currentURL) || [];
-
-          if(isVisited.length==0){
-            let newPage = ${JSON.stringify(data)};
-            newPage.id = window.location.href;
-            newPage.Link = window.location.href;
-            isVisited.push((newPage));
-            setData(isVisited);
-            iframe.contentWindow.postMessage({key:'setData',value:newPage}, "*");
-          }else{
-            iframe.contentWindow.postMessage({key:'setData',value:isVisited}, "*");
-          }
-
-        });
-
-
-        window.addEventListener("message", (event) => {
-          const { action, key } = event.data;
-
-          if(action === "getData"){
-            let {setData} = event.data;
-          }
-
-          if (action === "getUserData") {
-            console.log('event.data',event.data);
-            let browserData = {};
-            if(key){
-              for (let [keys, value] of Object.entries(key)) {
-                if (value && value !== "" && keys !== "id" && keys !== "Link" && keys !== "Corouser"&& keys !== "SelectImg") {
-                  let ele = document.querySelector(value);
-                  if(value === 'meta[name="description"]'){
-                    browserData[keys] = ele ? ele.content : "";
-                  }else{
-                    browserData[keys] = ele ? ele.innerText : "";
-                  }
-                } else if (keys === "Corouser") {
-                  let imgArray = Array.from(document.querySelectorAll(value)) || [];
-                  imgArray = imgArray.map((val) => val.src) ;
-                  browserData[keys] = imgArray;
-                } else {
-                  browserData[keys] = key[keys];
-                }
-              }
-            } 
-            event.source.postMessage({ key: "browserData", value: browserData }, "*");
-          }
-
-
-          if (action === "delete frame") {
-            let frameCon = document.querySelector("#container");
-            frameCon.remove();
-          }
-
-          const handleImgClick = (e)=>{
-            let clickEle = e.target;
-            let imgSrc = "";
-            if (clickEle.tagName  === "IMG") {
-              imgSrc = clickEle.src;
-              let pageId = window.location.href;
-              let currentPage = getData();
-              let imageData = currentPage.find(page=>page.id === pageId);
-              imageData.SelectImg.push(imgSrc);
-              setData(currentPage);
-              event.source.postMessage({ key: "imgData", value: imageData }, "*");
-            } else {
-              window.alert("Please select a proper image");
-            }
-            document.body.style.cursor = "default";
-          };
-
-          if (action === "select image") {
-            document.body.style.cursor = "crosshair";
-            document.body.addEventListener("click", handleImgClick, { once: true });
-          }
-
-          function handleTextClick(e) {
-            const clickedElement = e.target;
-            const selectedText = clickedElement.innerText;
-
-            if (selectedText !== "" && selectedText !== undefined) {
-              document.body.style.cursor = "pointer";
-              document.body.style.cursor = "default";
-              let pageId = window.location.href;
-              let pageData = getData();
-              let updatePage = pageData.find(page=>page.id ===pageId);
-              updatePage[key] = setPath(e.target);
-              console.log(setPath(e.target));
-              event.source.postMessage({key:'updateData',value:updatePage}, "*");
-              setData(pageData);
-            }
-          }
-
-          if (action === "select text") {
-            document.body.style.cursor = "crosshair";
-            document.body.addEventListener("click", handleTextClick, { once: true });
-          }
-        });
 
       let slider = document.createElement('div');
         slider.classList = 'slider';
-
           slider.innerHTML = '
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -227,12 +107,10 @@ export default {
           },1000);
 
           let styleFile = document.createElement('style');
-
           styleFile.textContent = '
             html{
               font-size:10px;
             }
-
             #container{
               height:100vh;
               width:25vw;
@@ -241,7 +119,6 @@ export default {
               right:0;
               z-index:999999999;
             }
-
             iframe{
               height:100%;
               width:100%;
@@ -249,7 +126,6 @@ export default {
               box-shadow: 0 0 10px gray;
               z-index:999999999;
             }
-
             .slider{
               height: 3.5rem;
               width: 3.5rem;
@@ -264,11 +140,9 @@ export default {
               z-index:999999999;
               box-shadow: 0 0 10px gray;
             }
-
             .slideBtn{
               left: 35rem !important;
             }
-
             .slider-svg{
               height:2rem;
               width:2rem;
@@ -276,11 +150,9 @@ export default {
               stroke-width:4;
               display:none;
             }
-
             .wrap{
               width:0%;
             }
-
             .active{
               display:block;
             }
@@ -288,7 +160,7 @@ export default {
             head.appendChild(styleFile);
               } else {
                   alert("Please wait until the page loads.");
-                }
+              }
       `;
     },
   },
@@ -321,4 +193,3 @@ export default {
   }
 }
 </style>
-../data/userData
