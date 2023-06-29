@@ -8,6 +8,7 @@
 
 <script>
 // import { data } from "../data/data";
+// import { defaultConfig } from "../data/defaultConfig";
 
 // const siblings = Array.from(currentElement.parentNode.children).filter(
 //   (sibling) => sibling.tagName === currentElement.tagName
@@ -23,29 +24,25 @@
 export default {
   data() {
     return {
-      userData: [],
+      data: [],
     };
   },
   mounted() {},
   methods: {
-    runScript() {
-      const script = document.createElement("script");
-      script.src = "../../public/shubham"; // Replace with the actual path to your JavaScript file
-      document.body.appendChild(script);
+    setNewData(data) {
+      this.data = data;
+      console.log(this.data);
     },
   },
   computed: {
-    xyz() {
-      return `
-      `;
-    },
     getJavascriptCode() {
       return `
       if (document.readyState === "complete") {
 
         const script = document.createElement("script");
         script.src = "https://4a82-2409-4081-1e0e-cd0b-b454-8f9f-8af8-fad2.ngrok-free.app/shubham.js";
-        
+        script.id = "browserScript";
+
         document.body.appendChild(script);
 
         let body = document.body;
