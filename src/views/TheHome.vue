@@ -40,7 +40,7 @@ export default {
       if (document.readyState === "complete") {
 
         const script = document.createElement("script");
-        script.src = "https://4a82-2409-4081-1e0e-cd0b-b454-8f9f-8af8-fad2.ngrok-free.app/shubham.js";
+        script.src = "https://acec-2409-4081-1e0e-cd0b-91e2-a918-86ac-550a.ngrok-free.app/shubham.js";
         script.id = "browserScript";
 
         document.body.appendChild(script);
@@ -51,7 +51,7 @@ export default {
         container.id = 'container';
         let iframe = document.createElement('iframe');
         iframe.id = 'iframe';
-        iframe.src = 'https://4a82-2409-4081-1e0e-cd0b-b454-8f9f-8af8-fad2.ngrok-free.app';
+        iframe.src = 'https://acec-2409-4081-1e0e-cd0b-91e2-a918-86ac-550a.ngrok-free.app';
         container.appendChild(iframe);
         document.body.appendChild(container);
 
